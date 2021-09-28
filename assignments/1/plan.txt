@@ -1,0 +1,11 @@
+3 files:
+
+shell.cpp: reading/writing to terminal, command parsing
+commands.cpp: implementations of the required commands
+data.cpp: constants and data structures defined here
+
+one .h defining everything? or could do one per cpp
+
+going to do this without the function map, then see if it still makes sense at the end.
+
+test change

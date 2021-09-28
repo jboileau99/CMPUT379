@@ -1,0 +1,9 @@
+**/**
+*/*
+*.*
+
+!.gitignore
+!assignments/
+!assignments/**
+!labs
+!labs/**
