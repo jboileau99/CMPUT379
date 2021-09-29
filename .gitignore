@@ -7,3 +7,6 @@
 !assignments/**
 !labs
 !labs/**
+
+*.o
+*.out
