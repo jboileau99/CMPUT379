@@ -13,15 +13,18 @@ const int MAX_LENGTH = 20;      // Max # of characters in an argument
 const int MAX_PT_ENTRIES = 32;  // Max entries in the Process Table
 const string SHELL_PREFIX = "SHELL379: ";
 const string SHELL_GREETING = "*************************\n*                       *\n*  Welcome to shell379! *\n*                       *\n*************************";
-const char *INFILE_CHAR = "<";
-const char *OUTFILE_CHAR = ">";
-const char *BACKGROUND_CHAR = "&";
+const char INFILE_CHAR = '<';
+const char OUTFILE_CHAR = '>';
+const char BACKGROUND_CHAR = '&';
 
 struct Process {
     int pid;
-    int start_time;
-    bool completed;
+    char status;
+    int runtime;
+    string command;
 };
+
+extern vector<Process> process_table;
 
 // {
 //     {"exit", exit},

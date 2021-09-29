@@ -9,6 +9,7 @@ using namespace std;
 int main();
 void initShell();
 vector<string> getInput();
-void dispatchCmd(vector<string> tokens);
+bool addProcess(int pid, char state, string command);
+void dispatchCmd(vector<string> tokens, string inFile, string outFile, bool background);
 
 #endif

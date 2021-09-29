@@ -6,6 +6,7 @@ using namespace std;
 #ifndef CMD_FUNCTIONS
 #define CMD_FUNCTIONS
 
+
 int _exit(vector<string> args);
 int _jobs(vector<string> args);
 int _kill(vector<string> args);

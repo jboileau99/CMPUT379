@@ -8,4 +8,8 @@ one .h defining everything? or could do one per cpp
 
 going to do this without the function map, then see if it still makes sense at the end.
 
-test change
+< and > should change cin and cout
+
+each cmd implemented as a function that returns some output (usually std::string?)
+
+I think the calling process should always create a new process for a command, but if & isn't called it should use wait to pause until it is done?
