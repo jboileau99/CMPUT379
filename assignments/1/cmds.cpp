@@ -1,10 +1,11 @@
 #include "data.h"
 #include "cmds.h"
 
-#include <unistd.h>
-#include <signal.h>
 #include <iostream>
 #include <thread>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/wait.h>
 
 int _exit(vector<string> args) {
     exit(0);
@@ -50,11 +51,17 @@ int _sleep(vector<string> args) {
 int _suspend(vector<string> args) {
 
     // Get pid from process table
-    int pid;
+    try {
+        int pid = stoi(args[0]);
+    } catch {
+        // TODO: Do something with errors codes once this is all working
+        return -1
+    }
 
     kill(pid, SIGSTOP);
 
     // Update status in process table
+    
 
     return 1;
 }
@@ -65,4 +72,11 @@ int _wait(vector<string> args) {
 
 int _exec(vector<string> args) {
     return 1;
+}
+
+void SIGCHLDCallback(int signum) {
+    int status;
+    int pid = waitpid(-1, &status, WNOHANG);
+    cout << "Got sigchld from PID: " << pid << " Status: " << status << endl;
+    cout << WIFEXITED(status) << endl;
 }

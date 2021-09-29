@@ -18,7 +18,7 @@
 vector<Process> process_table;
 
 // Can delete this after
-bool debug = true;
+bool debug = false;
 
 void initShell() {
     
@@ -49,6 +49,37 @@ bool addProcess(int pid, char status, string command) {
     return true; // should do some error checking to see if process was added and return t/f?
 }
 
+bool updateProcessStatus(int pid, char newStatus) {
+    // TODO: change process table to map with PID keys?
+}
+
+bool updateProcessTime(int pid, int newTime) {
+
+}
+
+bool removeProcessNumber(long unsigned int num) {
+    if (num >= 0 && num < process_table.size()) {
+        // Erase process at position num
+        process_table.erase(process_table.begin() + num);
+        return true;
+    }
+    // Otherwise, Invalid process number
+    return false;
+}
+
+bool removeProcessPID(int pid) {
+    for (long unsigned int i = 0; i < process_table.size(); i++) {
+
+        // Erase process and return sucess if found
+        if (process_table[i].pid == pid) {
+            process_table.erase(process_table.begin() + i);
+            return true;
+        }
+    }
+    // If we make it here we didn't find the PID, so return false
+    return false;
+}
+
 // Determine the command and arguements from given input
 void dispatchCmd(vector<string> args, string inFile, string outFile, bool background) {
 
@@ -58,11 +89,7 @@ void dispatchCmd(vector<string> args, string inFile, string outFile, bool backgr
     // Get the command name
     string cmd = args[0];
 
-    // Fork to new process if background flag set - OR should we just be calling wait here or lower if background is set?
-    // pid = fork();
-    // I think maybe the idea is only the exec command or background flag spawns a new process
-
-    // Add the child to process table
+    // Spawn child proccess if this command is to be run in background
     if (background) {
         pid = fork();
     }
@@ -90,20 +117,14 @@ void dispatchCmd(vector<string> args, string inFile, string outFile, bool backgr
         }
 
         // Child processes should exit after completing
-        // if (pid == 0) {
-        //     exit(0);
-        // }
+        if (pid == 0) {
+            exit(0);
+        }
 
     } else {
         // Parent - add child to process table
         addProcess(pid, 'R', join(args));
     }
-}
-
-void sigchldCallback(int signum) {
-    int status;
-    int pid = waitpid(-1, &status, WNOHANG);
-    cout << "Got sigchld from PID: " << pid << " Status: " << status << endl;
 }
 
 int main() {
@@ -118,7 +139,7 @@ int main() {
     bool background;
 
     // Sig handlers
-    signal(SIGCHLD, sigchldCallback);
+    signal(SIGCHLD, SIGCHLDCallback);
 
     // Repeatedly get input
     while (true) {
