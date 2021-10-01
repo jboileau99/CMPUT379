@@ -5,6 +5,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <algorithm>
 #include <list>
 #include <typeinfo>
 #include <stdio.h>
@@ -15,7 +16,7 @@
 
 // Global variables
 // map<string, pfunc> func_map;
-vector<Process> process_table;
+map<int, Process> process_table;
 
 // Can delete this after
 bool debug = false;
@@ -39,49 +40,8 @@ vector<string> getInput() {
     return tokens;
 }
 
-bool addProcess(int pid, char status, string command) {
-    Process p = {pid, status, 0, command};
-    process_table.push_back(p);
-    if (debug) {
-        cout << "added process: " << p.pid << " " << p.status << " " << p.command << endl;
-    }
-
-    return true; // should do some error checking to see if process was added and return t/f?
-}
-
-bool updateProcessStatus(int pid, char newStatus) {
-    // TODO: change process table to map with PID keys?
-}
-
-bool updateProcessTime(int pid, int newTime) {
-
-}
-
-bool removeProcessNumber(long unsigned int num) {
-    if (num >= 0 && num < process_table.size()) {
-        // Erase process at position num
-        process_table.erase(process_table.begin() + num);
-        return true;
-    }
-    // Otherwise, Invalid process number
-    return false;
-}
-
-bool removeProcessPID(int pid) {
-    for (long unsigned int i = 0; i < process_table.size(); i++) {
-
-        // Erase process and return sucess if found
-        if (process_table[i].pid == pid) {
-            process_table.erase(process_table.begin() + i);
-            return true;
-        }
-    }
-    // If we make it here we didn't find the PID, so return false
-    return false;
-}
-
 // Determine the command and arguements from given input
-void dispatchCmd(vector<string> args, string inFile, string outFile, bool background) {
+void dispatchCmd(vector<string> args, string inFile, string outFile, bool externalCmd, bool background) {
 
     // Initialize vars
     int pid = getpid();
@@ -89,16 +49,23 @@ void dispatchCmd(vector<string> args, string inFile, string outFile, bool backgr
     // Get the command name
     string cmd = args[0];
 
+    // Setup pipe here, before fork
+    // https://stackoverflow.com/questions/7292642/grabbing-output-from-exec
+    // http://www.gnu.org/savannah-checkouts/gnu/libc/manual/html_node/Creating-a-Pipe.html
+    // Maybe should only do this if background or externalCmd? aka we're going to fork
+    int link[2];
+    pipe(link);
+
     // Spawn child proccess if this command is to be run in background
-    if (background) {
+    if (background || externalCmd) {
         pid = fork();
     }
 
     // Process in foreground or this is the child
-    if (!background || pid == 0) {
+    if ((!background && !externalCmd) || pid == 0) {
 
         if (cmd == "exit") {
-            sleep(3);
+            sleep(10);
             _exit(args);
         } else if (cmd == "jobs") {
             _jobs(args);
@@ -123,11 +90,31 @@ void dispatchCmd(vector<string> args, string inFile, string outFile, bool backgr
 
     } else {
         // Parent - add child to process table
-        addProcess(pid, 'R', join(args));
+        addProcess(pid, PSTATUS_RUNNING, join(args));
+
+        if (externalCmd && !background) {
+            int status;
+            waitpid(pid, &status, 0);
+        }
     }
 }
 
 int main() {
+
+    /**
+     * Issue
+     * 
+     * I thought suspend/resume/sleep wasn't working right...
+     * 
+     * But actually it's cause the sleep() function runs on real-time seconds, so I don't think stopped processes count
+     *
+     * So maybe we're ok?
+     * 
+     * TODO
+     * - Exec command
+     * - Pipe implementation
+     * - Clean up processes on _exit() command
+     */
 
     // Will want to init process table here too
     initShell();
@@ -136,6 +123,7 @@ int main() {
     vector<string> tokens;
     string inFile;
     string outFile;
+    bool externalCmd;
     bool background;
 
     // Sig handlers
@@ -146,15 +134,18 @@ int main() {
 
         // Get a vector of space seperated tokens
         tokens = getInput();
+
+        // Process and dispatch if input not empty
         if (!tokens.empty()) {
 
-            // Check for the 3 possible command modifiers
+            // Check for the 3 possible command modifiers or if this is a non-shell379 command
             string inFile = checkStartSplit(tokens, INFILE_CHAR);
             string outFile = checkStartSplit(tokens, OUTFILE_CHAR);
+            externalCmd = find(SHELL_CMDS.begin(), SHELL_CMDS.end(), tokens.front()) == SHELL_CMDS.end();
             background = tokens.back()[0] == BACKGROUND_CHAR;
 
             // Run the command
-            dispatchCmd(tokens, inFile, outFile, background);
+            dispatchCmd(tokens, inFile, outFile, externalCmd, background);
         }
     }
 

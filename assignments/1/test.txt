@@ -1,0 +1,3 @@
+- Create runner program that simply counts or does nothing for like 30 seconds
+- Try running this from our shell, and try running seperately (not a child process of shell379) and using wait, kill, etc. commands on it
+- Sleep without int arg for time gives seg fault.. do all commands do this?

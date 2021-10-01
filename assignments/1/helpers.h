@@ -13,4 +13,10 @@ string join(vector<string> strings);
 // Check for a character c at start of string, return rest of string if found
 string checkStartSplit(vector<string> tokens, char c);
 
+// Convert a vector of strings to a vector of characters
+vector<char*> strVec2CharVec(vector<string> v);
+
+// Testing functions
+void inspectStatus(int status);
+
 #endif

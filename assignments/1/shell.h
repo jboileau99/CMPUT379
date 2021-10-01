@@ -9,11 +9,6 @@ using namespace std;
 int main();
 void initShell();
 vector<string> getInput();
-bool addProcess(int pid, char state, string command);
-bool updateProcessStatus(int pid, char newStatus);
-bool updateProcessTime(int pid, int newTime);
-bool removeProcessNumber(long unsigned int num);
-bool removeProcessPID(int pid);
-void dispatchCmd(vector<string> tokens, string inFile, string outFile, bool background);
+void dispatchCmd(vector<string> tokens, string inFile, string outFile, bool, bool externalCmd, bool background);
 
 #endif

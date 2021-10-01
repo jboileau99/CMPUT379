@@ -3,6 +3,7 @@
 #include <map>
 #include <functional>
 #include <string>
+#include <vector>
 
 using namespace std;
 using pfunc = int (*)(vector<string>);
@@ -16,23 +17,18 @@ const string SHELL_GREETING = "*************************\n*                     
 const char INFILE_CHAR = '<';
 const char OUTFILE_CHAR = '>';
 const char BACKGROUND_CHAR = '&';
+const char PSTATUS_RUNNING = 'R';
+const char PSTATUS_SLEEPING = 'S';
+const char PSTATUS_SUSPENDED = 'T';
+
+const vector<string> SHELL_CMDS = {"exit", "jobs", "kill", "resume", "sleep", "suspend", "wait"};
 
 struct Process {
-    int pid;
+    int number;
     char status;
     int runtime;
     string command;
 };
 
-extern vector<Process> process_table;
-
-// {
-//     {"exit", exit},
-//     {"jobs", jobs},
-//     {"kill", kill},
-//     {"resume", resume},
-//     {"sleep", sleep},
-//     {"suspend", suspend},
-//     {"wait", wait},
-//     {"exec", exec},
-// };
+extern map<int, Process> process_table;
+extern bool debug;
