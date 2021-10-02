@@ -1,0 +1,9 @@
+args after outFile:
+test
+2
+This should never print
+
+<in
+>out
+2
+This should never print

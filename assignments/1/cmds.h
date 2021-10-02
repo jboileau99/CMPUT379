@@ -21,8 +21,10 @@ bool addProcess(int pid, char state, string command);
 bool updateProcessStatus(int pid, char newStatus);
 bool updateProcessTime(int pid, int newTime);
 bool removeProcessPID(int pid);
+void getUpdatedProcessTimes();
 
 // Signal callbacks
 void SIGCHLDCallback(int signum);
+void handleStatus(int status, int pid);
 
 #endif

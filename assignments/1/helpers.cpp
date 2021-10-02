@@ -37,6 +37,16 @@ string checkStartSplit(vector<string> tokens, char c) {
     return s;
 }
 
+vector<string> removeElement(vector<string> v, string s) {
+
+    auto it = find(v.begin(), v.end(), s);
+    if (it != v.end()) {
+        v.erase(it);
+    }
+    return v;
+
+}
+
 vector<char*> strVec2CharVec(vector<string> v) {
     
     string *s = &v[0];

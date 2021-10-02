@@ -1,0 +1,5 @@
+args after outFile:
+test
+<out
+2
+This should never print

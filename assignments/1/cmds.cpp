@@ -3,6 +3,7 @@
 #include "helpers.h"
 
 #include <iostream>
+#include <string>
 #include <thread>
 #include <unistd.h>
 #include <signal.h>
@@ -10,6 +11,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <error.h>
 
 /**
  * Shell commands
@@ -25,8 +27,10 @@ int _exit(vector<string> args) {
 
 int _jobs(vector<string> args) {
 
-    // TODO: Probably a better way to format here...
+    // Get updated timing info for each process - TEST THIS TMRW
+    getUpdatedProcessTimes()
 
+    // TODO: Probably a better way to format here...
     cout << "Running processes:" << endl;
 
     if (!process_table.empty()) {
@@ -116,18 +120,15 @@ int _wait(vector<string> args) {
 }
 
 int _exec(vector<string> args) {
-    /**
-     * This works:
-     *      char *a[] = {"ls_test", NULL};
-     *      execv(a[0], a);
-     */
 
+    // Convert string vector to char vector and add a NULL terminater required by execv
     vector<char*> cArgs = strVec2CharVec(args);
+    cArgs.push_back(NULL);
 
     try {
-        execv(cArgs[0], &cArgs[0]);
-
-        // Pipe output here
+        if (execv(cArgs[0], &cArgs[0])) {
+            perror(("Error running '" + args[0] + "'").c_str());
+        };
 
     } catch (exception&) {
         // TODO: Do something with errors codes once this is all working
@@ -144,7 +145,7 @@ bool addProcess(int pid, char status, string command) {
     Process p = {process_table.size(), status, 0, command};
     process_table[pid] = p;
     if (debug) {
-        cout << "added process: " << pid << " " << p.status << " " << p.command << endl;
+        //cout << "added process: " << pid << " " << p.status << " " << p.command << endl;
     }
 
     return true; // should do some error checking to see if process was added and return t/f?
@@ -195,40 +196,72 @@ bool removeProcessPID(int pid) {
     }
 }
 
+void getUpdatedProcessTimes() {
+
+    // Use pipe to read ps output
+    FILE * p;
+    char path[2048];
+    p = popen("ps", "r");
+    vector<string> psLine;
+    int pid, h, m, s, seconds;
+
+    while (fgets(path, 2048, p) != NULL) {
+
+        // Split into vector of std::strings
+        psLine = split(path, (char*)" ");
+
+        // Convert string pid to int
+        pid = atoi(psLine[0].c_str());
+
+        // Parse seconds from time
+        if (sscanf(psLine[2].c_str(), "%d:%d:%d", &h, &m, &s) >= 2) {
+            seconds = h*3600 + m*60 + s;
+        }
+
+        // Update table
+        updateProcessTime(pid, seconds)
+    }
+    pclose( p );
+}
+
 /**
  * Signal Callbacks
  */
 
-void SIGCHLDCallback(int signum) {
-    int status;
-    int pid = waitpid(-1, &status, WNOHANG + WUNTRACED);
+void handleStatus(int status, int pid) {
 
     if (pid == -1) {
         // Error with waitpid
         //cout << "SIGCHLD from already waited process, or error with waitpid" << endl;
     } else if (pid == 0) {
         // Still running... set status to R?
-        cout << pid << " still running" << endl;
+        //cout << pid << " still running" << endl;
     } else {
         // Determine process state
-        cout << pid << " ";
         if (WIFEXITED(status)) {
-            cout << " terminated normally";
+            //cout << " terminated normally";
             removeProcessPID(pid);
         } else if (WIFSIGNALED(status)) {
-            cout << " terminated by signal";
+            //cout << " terminated by signal";
             removeProcessPID(pid);
         } else if (WIFSTOPPED(status)) {
-            cout << " suspended by signal";
+            //cout << " suspended by signal";
             updateProcessStatus(pid, PSTATUS_SUSPENDED);
         } else if (WIFCONTINUED(status)) {
-            cout << " resumed by signal";
+            //cout << " resumed by signal";
             updateProcessStatus(pid, PSTATUS_RUNNING);
         } else {
-            cout << "something else happened...";
+            //cout << " undetermined";
         }
-        cout << endl;
+        //cout << endl;
     }
+}
+
+void SIGCHLDCallback(int signum) {
+    int status;
+    int pid = waitpid(-1, &status, WNOHANG + WUNTRACED);
+    handleStatus(status, pid);
+
     //cout << "Got sigchld from PID: " << pid << " Status: " << status << endl;
     //inspectStatus(status);
 }

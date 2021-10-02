@@ -13,6 +13,8 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <stdlib.h>
+#include <fcntl.h>
 
 // Global variables
 // map<string, pfunc> func_map;
@@ -53,8 +55,6 @@ void dispatchCmd(vector<string> args, string inFile, string outFile, bool extern
     // https://stackoverflow.com/questions/7292642/grabbing-output-from-exec
     // http://www.gnu.org/savannah-checkouts/gnu/libc/manual/html_node/Creating-a-Pipe.html
     // Maybe should only do this if background or externalCmd? aka we're going to fork
-    int link[2];
-    pipe(link);
 
     // Spawn child proccess if this command is to be run in background
     if (background || externalCmd) {
@@ -64,6 +64,49 @@ void dispatchCmd(vector<string> args, string inFile, string outFile, bool extern
     // Process in foreground or this is the child
     if ((!background && !externalCmd) || pid == 0) {
 
+        // Save previous stdout so we can restore it
+        int prev_stdout = dup(1);
+        if (prev_stdout < 0) {
+            perror("dup failed!");
+        }
+
+        // Setup input piping if provided
+        if (!inFile.empty()) {
+
+            // Open infile and get file descriptor
+            int ffd;
+            if ((ffd = open(inFile.c_str(), O_CREAT | O_RDWR, 0644)) < 0) {
+                perror("open failed!");
+            }
+
+            // Point stdin to inFile
+            if (dup2(ffd, STDIN_FILENO) < 0) {
+                perror("dup2 failed!");
+            }
+            close(ffd);
+
+            args = removeElement(args, "<" + inFile);
+        }
+
+        // Setup output piping if provided
+        if (!outFile.empty()) {
+            
+            // Open outfile and get file descriptor
+            int ffd;
+            if ((ffd = open(outFile.c_str(), O_CREAT | O_RDWR, 0644)) < 0) {
+                perror("open failed!");
+            }
+            
+            // Point stdout to outFile
+            if (dup2(ffd, STDOUT_FILENO) < 0) {
+                perror("dup2 failed!");
+            }
+            close(ffd);
+
+            args = removeElement(args, ">" + outFile);
+        }
+
+        // Run the called shell command or execute some other program
         if (cmd == "exit") {
             sleep(10);
             _exit(args);
@@ -83,8 +126,13 @@ void dispatchCmd(vector<string> args, string inFile, string outFile, bool extern
             _exec(args);
         }
 
+        // Restore stdout to shell
+        if (pid != 0) {
+            dup2(prev_stdout, 1);
+            close(prev_stdout);
+        } else {
+
         // Child processes should exit after completing
-        if (pid == 0) {
             exit(0);
         }
 
@@ -93,8 +141,11 @@ void dispatchCmd(vector<string> args, string inFile, string outFile, bool extern
         addProcess(pid, PSTATUS_RUNNING, join(args));
 
         if (externalCmd && !background) {
-            int status;
+            int status;            
             waitpid(pid, &status, 0);
+            
+            // Pass status and PID to function that will update process table
+            handleStatus(status, pid);
         }
     }
 }

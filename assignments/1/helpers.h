@@ -16,6 +16,9 @@ string checkStartSplit(vector<string> tokens, char c);
 // Convert a vector of strings to a vector of characters
 vector<char*> strVec2CharVec(vector<string> v);
 
+// Erase a string s if it exists as an element in v
+vector<string> removeElement(vector<string> v, string s);
+
 // Testing functions
 void inspectStatus(int status);
 

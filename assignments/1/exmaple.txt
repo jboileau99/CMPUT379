@@ -1,0 +1,26 @@
+dup2 return:1
+Makefile
+a.out
+a.txt
+cmds.cpp
+cmds.h
+cmds.o
+data.h
+example.txt
+exmaple.txt
+helpers.cpp
+helpers.h
+helpers.o
+ls_test
+ls_test.cpp
+pipeTest.cpp
+pipeTest2.cpp
+plan.txt
+questions_for_lab.txt
+shell
+shell.cpp
+shell.h
+shell.o
+test.txt
+testWriter.cpp
+testWriter2.cpp
