@@ -5,7 +5,6 @@ CFLAGS= -c -Wall
 
 shell: shell.o cmds.o helpers.o
 	$(CC) shell.o cmds.o helpers.o -o shell
-	./shell
 
 # Then each part compiles sperately to create object (.o) files like this:
 

@@ -1,0 +1,2 @@
+1. What does "Thread X asks for work" correlate to?
+2. Should we log before or after events

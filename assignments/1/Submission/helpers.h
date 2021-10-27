@@ -25,6 +25,7 @@ string join(vector<string> strings);
 string checkStartSplit(vector<string> tokens, char c);
 
 // Convert a vector of strings to a vector of characters
+// Consulted https://stackoverflow.com/questions/26032039/convert-vectorstring-into-char-c
 vector<char*> strVec2CharVec(vector<string> v);
 
 // Erase a string s if it exists as an element in v

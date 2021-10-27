@@ -1,6 +1,0 @@
-2
-This should never print
-es =	0 active
-Completed processes:
-User time =	TODO seconds
-Sys  time =	TODO seconds

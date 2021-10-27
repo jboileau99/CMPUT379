@@ -33,7 +33,6 @@ void initShell() {
     cout << SHELL_GREETING << endl;
 }
 
-
 vector<string> getInput() {
 
     // Print out shell prefix and get 100 characters of input

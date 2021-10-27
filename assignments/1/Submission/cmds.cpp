@@ -46,7 +46,7 @@ int _exit(vector<string> args) {
 
 int _jobs(vector<string> args) {
 
-    // Get updated timing info for each process - TEST THIS TMRW
+    // Get updated timing info for each process
     getUpdatedProcessTimes();
 
     // Print formatted output table
@@ -137,6 +137,7 @@ int _exec(vector<string> args) {
     cArgs.push_back(NULL);
 
     try {
+        // Uses execvp so we don't need to specify full paths to commands such as 'ls'
         if (execvp(cArgs[0], &cArgs[0])) {
             perror(("Error running '" + args[0] + "'").c_str());
         };
@@ -154,8 +155,7 @@ int _exec(vector<string> args) {
 bool addProcess(int pid, char status, string command) {
     Process p = { status, 0, command};
     process_table[pid] = p;
-
-    return true; // should do some error checking to see if process was added and return t/f?
+    return true;
 }
 
 bool updateProcessStatus(int pid, char newStatus) {
@@ -245,35 +245,36 @@ void updateTimes() {
 void handleStatus(int status, int pid) {
 
     if (pid == -1) {
-        // Error with waitpid
-        //cout << "SIGCHLD from already waited process, or error with waitpid" << endl;
+        // Error with waitpid or this process was already waited
     } else if (pid == 0) {
-        // Still running... set status to R?
-        //cout << pid << " still running" << endl;
+        // Still running
     } else {
         // Determine process state
         if (WIFEXITED(status)) {
-            //cout << " terminated normally";
+            
             // Update sys and user times
             updateTimes();
+            
             // Remove terminated process from table
             removeProcessPID(pid);
         } else if (WIFSIGNALED(status)) {
-            //cout << " terminated by signal";
+            
             // Update sys and user times
             updateTimes();
+            
             // Remove terminated process from table
             removeProcessPID(pid);
         } else if (WIFSTOPPED(status)) {
-            //cout << " suspended by signal";
+            
+            // Update process table for suspended process
             updateProcessStatus(pid, PSTATUS_SUSPENDED);
         } else if (WIFCONTINUED(status)) {
-            //cout << " resumed by signal";
+            
+            // Update process table for resumed process
             updateProcessStatus(pid, PSTATUS_RUNNING);
         } else {
-            //cout << " undetermined";
+            // Undetermined
         }
-        //cout << endl;
     }
 }
 
@@ -281,7 +282,4 @@ void SIGCHLDCallback(int signum) {
     int status;
     int pid = waitpid(-1, &status, WNOHANG + WUNTRACED);
     handleStatus(status, pid);
-
-    //cout << "Got sigchld from PID: " << pid << " Status: " << status << endl;
-    //inspectStatus(status);
 }

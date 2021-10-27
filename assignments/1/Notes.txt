@@ -3,3 +3,6 @@
 - Sleep without int arg for time gives seg fault.. do all commands do this?
 - Need to handle case where >output or <input is provided for commands with arguments, probably by removing the <FILE and >FILE portions from the vector
 - Need to update times and active processes on jobs printout
+- Do I have the right statuses
+
+- NOTE: exit doesn't properly update sys and user time for the processes it waited for

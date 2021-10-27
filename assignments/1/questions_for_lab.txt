@@ -1,1 +1,0 @@
-1. If & is passed, we want to fork, otherwise run command in parent?
