@@ -52,10 +52,7 @@ int main(int argc , char *argv[]) {
             printf("ERROR: Port arguement must be in the range 5,000 to 64,000");
             exit(EXIT_FAILURE);
         }
-        
-        printf("Using port %d\n", port);
-        printf("Using server address %s\n", ip.c_str());
-        printf("Host %s\n", hostname);
+
     } else {
         printf("ERROR: Exactly 2 arguements expected");
         exit(EXIT_FAILURE);
@@ -70,18 +67,14 @@ int main(int argc , char *argv[]) {
     if ((connfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("socket");
         exit(-1);
-    } else {
-        printf("Socket created\n");
     }
 
     // Connect to server
     if (connect(connfd, (struct sockaddr *)&server, server_size) < 0) {
         perror("connect failed. Error");
         exit(-1);
-    } else {
-        printf("Connected\n");
     }
-
+    
     // Write log header
     writeLogHeaderClient(id, to_string(port), ip, id);
 
@@ -119,7 +112,6 @@ int main(int argc , char *argv[]) {
                 } else {
 
                     message_str.assign(message, message_size);
-                    printf("Server reply: %s\n", message_str.c_str());
 
                     if (message_str.size() >= 2 && message_str[0] == 'D') {
 
@@ -128,7 +120,6 @@ int main(int argc , char *argv[]) {
                         
                         // Log server response
                         writeLogClient(id, "D", server_transactions);
-                        printf("Server reply: %c%d\n", 'D', server_transactions);
                     }
                 }
 

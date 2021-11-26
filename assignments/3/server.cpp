@@ -63,7 +63,6 @@ int main(int argc , char *argv[]) {
             printf("ERROR: Port arguement must be in the range 5,000 to 64,000\n");
             exit(EXIT_FAILURE);
         }
-		printf("Using port %d\n", port);
         
     } else {
         printf("ERROR: Exactly 1 arguement expected\n");
@@ -97,7 +96,6 @@ int main(int argc , char *argv[]) {
         perror("bind failed");
         exit(EXIT_FAILURE);
     }  
-    printf("Listener on port %d \n", port);
          
     // Try to specify maximum of 3 pending connections for the master socket 
     if (listen(master_socket, 3) < 0) {
@@ -107,7 +105,6 @@ int main(int argc , char *argv[]) {
          
     // Accept the incoming connection
     addrlen = sizeof(address);
-    puts("Waiting for connections ...");
 
     // Write log header
 	writeLogHeaderServer(id, to_string(port));
@@ -162,10 +159,7 @@ int main(int argc , char *argv[]) {
             if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
                 perror("accept");
                 exit(EXIT_FAILURE);
-            }  
-             
-            // Inform user of socket number - used in send and receive commands 
-            printf("New connection, socket fd is %d, ip is : %s, port : %d \n", new_socket, inet_ntoa(address.sin_addr), ntohs(address.sin_port));
+            }
                                   
             // Add new socket to array of sockets 
             for (i = 0; i < max_clients; i++) {
@@ -173,7 +167,6 @@ int main(int argc , char *argv[]) {
                 // If position is empty
                 if( client_socket[i] == 0 ) {
                     client_socket[i] = new_socket;
-                    printf("Adding to list of sockets as %d\n" , i);
                     break;  
                 }  
             }  
@@ -191,7 +184,6 @@ int main(int argc , char *argv[]) {
                     
                     // Get details of disconnected FD
                     getpeername(sd ,(struct sockaddr*)&address ,(socklen_t*)&addrlen);
-                    printf("Host disconnected , ip %s , port %d \n", inet_ntoa(address.sin_addr), ntohs(address.sin_port));
                          
                     // Close the socket and mark as 0 so it will be reused 
                     close(sd);
@@ -215,10 +207,6 @@ int main(int argc , char *argv[]) {
                         Trans(work_time);
                         writeLogServer(id, "D", transactions, work_time, client_id);
 
-                        puts(to_string(work_time).c_str());
-                        puts(client_id.c_str());
-                        puts(message_str.c_str());
-
                         // Update stats
                         if (stats.find(client_id) == stats.end()) {
                             // Not found
@@ -232,10 +220,6 @@ int main(int argc , char *argv[]) {
                         response = "D" + to_string(transactions);
                         strcpy(buffer, response.c_str());
                         send(sd , buffer, strlen(buffer), 0);
-
-                        for (auto &it : stats) {
-                            printf("%s : %d\n", it.first.c_str(), it.second);
-                        }
                     }
                 }
             }
