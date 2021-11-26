@@ -2,15 +2,23 @@
 
 ## Usage Instructions
 
-Run "make" or "make prodcon" to generate a "prodcon" executable which can be run in the following form:
-    "prodcon {nthreads} {id} {<inputFile}"
+Run "make" or "make prodcon" to generate "server" and "client" executables which can be run in the following form, respectively:
+    "server port {<inputFile}"
+    "client port ip-address {<inputFile}"
 
 - Args:
+  - port: 
+  - ip-address
+  - inputFile
     
 
 ## Included files
 
-### prodcon.cpp / prodcon.h
+### server.cpp / server.h
+
+
+
+### client.cpp / client.h
 
 
 
@@ -21,6 +29,8 @@ Run "make" or "make prodcon" to generate a "prodcon" executable which can be run
 ### tands.c
 
 - Trans and sleep commands provided for assignment.
+
+### server.1 / client.1
 
 ### Makefile
 
