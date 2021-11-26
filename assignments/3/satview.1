@@ -1,0 +1,32 @@
+.TH SATVIEW 1 "April 19, 2003" "Satview Version 10.1"
+.SH NAME
+satview \- View satellite images.
+.SH SYNOPSIS
+\fBsatview\fP [-p \fIprojection\fP] [-m] [-z \fIzoomlevel\fP]
+\fIfilename\fP
+.SH DESCRIPTION
+\fBsatview\fP displays the satellite image from \fIfilename\fP.
+.SS Options
+.TP
+\fB-p \fIprojection\fR
+Set the map projection (can be \fBL\fR for Lambert Conformal or
+\fBP\fR for Polar Stereographic). The default is Lambert Conformal.
+.TP
+\fB-m\fP
+Include a map in the satellite image.
+.TP
+\fB-z \fIzoomlevel\fR
+Set the zoom level (can be one of: 2, 4, or 8). The default
+zoomlevel is 1.
+.TP
+\fIfilename\fR
+File containing satellite data.
+.SH FILES
+.TP
+\fC/etc/awips/satview.rc\fR
+Initialization commands for \fBsatview\fR
+.SH SEE ALSO
+nexrad(1), contour(1)
+.SH Bugs
+At zoom levels greater than 2, map is not properly 
+aligned with image.

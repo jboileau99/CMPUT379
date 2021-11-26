@@ -1,21 +1,24 @@
-# Declare variables in makefile
-
 CC=g++
-CFLAGS= -c -Wall -pthread
-LFLAGS= -pthread
+CFLAGS= -O -Wall -pthread
+OBJECTS = prodcon.o helpers.o
 
 prodcon: prodcon.o helpers.o
-	$(CC) $(LFLAGS) prodcon.o helpers.o -o prodcon
+	$(CC) $(CFLAGS) $(OBJECTS) -o prodcon
 
-# Then each part compiles sperately to create object (.o) files like this:
+# Create object (.o) files for each:
 
-prodcon.o: prodcon.cpp
-	$(CC) $(CFLAGS) prodcon.cpp
+prodcon.o: prodcon.cpp prodcon.h tands.c
+	$(CC) $(CFLAGS) -c prodcon.cpp -o prodcon.o
 
-helpers.o: helpers.cpp
-	$(CC) $(CFLAGS) helpers.cpp
+helpers.o: helpers.cpp helpers.h
+	$(CC) $(CFLAGS) -c helpers.cpp -o helpers.o
 	
 # Remove all intermediate files
 
 clean:
 	rm -rf *.o
+
+# Compress for submission
+
+compress:
+	zip assignment2.zip Makefile README.md prodcon.h prodcon.cpp helpers.h helpers.cpp tands.c

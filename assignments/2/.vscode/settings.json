@@ -4,6 +4,7 @@
         "iostream": "cpp",
         "ratio": "cpp",
         "chrono": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "stdexcept": "cpp"
     }
 }

@@ -1,0 +1,6 @@
+- Move running instructions to top of README - Done
+- Fix order of stats to match example - Done
+- Move transactions per second number to left align - Done
+- Remove "End" from stats count - Done
+- Add rational about logging outside of critical sections - Done
+- Error checking for thread values - Done

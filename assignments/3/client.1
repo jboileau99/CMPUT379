@@ -1,0 +1,14 @@
+.TH CLIENT 1 "November 26, 2021" "Client Version 1.0"
+.SH NAME
+client - send transactions to server.
+.SH SYNOPSIS
+\fBclient\fP \fIport\fP \fIip-address\fP
+.SH DESCRIPTION
+\fBclient\fP attempts to establish a socket connection with the server at \fIip-address\fP:\fIport\fP, then sends a series of transaction commands from STDIN to the server.
+.SS Options
+.TP
+\fIport\fP
+The port number that the server reads from.
+.TP
+\fIip-address\fP
+The IP (Internet Protocol) address of the machine that is hosting the server.

@@ -1,0 +1,11 @@
+.TH SERVER 1 "November 26, 2021" "Client Version 1.0"
+.SH NAME
+server - process requests from client(s).
+.SH SYNOPSIS
+\fBserver\fP \fIport\fP
+.SH DESCRIPTION
+\fBserver\fP listens on port number \fIport\fP for communications from clients. Processes transaction requests from clients by calling the Trans(n) function, then waits for another message. Can communicate with multiple clients concurrently.
+.SS Options
+.TP
+\fIport\fP
+The port number that the /fBserver/fP listens to for communications from clients. The \fIport\fP must be in range 5,000 to 64,000.

@@ -6,7 +6,17 @@
 
 using namespace std;
 
-vector<pair<char, int>> readCommands(string cmdsFile);
+/**
+ * Write producer or consumer event to log file
+ */
 void writeLog(string logfile, float time, int id, string event, int q=-1, int n=-1);
-void writeLogStats(string logfile, map<string, int> globalStats, map<int,int> threadStats);
+
+/**
+ * Write stats to logfile
+ */
+void writeLogStats(string logfile, map<string, int> globalStats, map<int,int> threadStats, float endTime);
+
+/**
+ * Get time since start time
+ */
 float getElapsed(chrono::time_point<chrono::high_resolution_clock> start);

@@ -12,7 +12,11 @@ float i = 2;
 
 int main() {
 
-    printf("%-3.3f wow that worked", i);
+    for (string line; getline(cin, line);) {
+
+        
+
+    }
 
     return 0;
 
