@@ -1,26 +1,26 @@
-# CMPUT 379 Assignment 2
+# CMPUT 379 Assignment 3
 
 ## Usage Instructions
 
-Run "make" or "make prodcon" to generate "server" and "client" executables which can be run in the following form, respectively:
+Run "make" to generate "server" and "client" executables and PDF documents containing the man pages for each. Both executables can be run in the following form, respectively:
     "server port {<inputFile}"
     "client port ip-address {<inputFile}"
 
 - Args:
-  - port: 
-  - ip-address
-  - inputFile
+  - port: Port is the number that the server reads from and the clients send to.
+  - ip-address: IP address of the machine that is hosting the server
+  - inputFile: Optional newline seperated file of T<N> or S<N> commands.
     
 
 ## Included files
 
 ### server.cpp / server.h
 
-
+Source code for a single threaded server that accepts up to 30 client connections simultaneously. Will process transaction requests in the form T<N> and upon completion, respond to the client that sent the request. Maintains a log file of it's connections/actions.
 
 ### client.cpp / client.h
 
-
+Source code for a single threaded client that accepts input from stdin and sends transaction requests to a client, from which it awaits a response before doing further work. Maintains a log file of it's connections/actions.
 
 ### helpers.cpp / helpers.h
 
